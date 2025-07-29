@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Aplikasi Pengajuan</title>
+  <link rel="icon" href="images/logo.png" type="image/jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <div class="page-container">
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+      <a href="#" class="admin-btn">
+        <img src="images/admin.png" alt="Admin Icon" class="admin-icon">
+        Admin
+      </a>
+    </div>
+
+    <h1>Login User</h1>
+
+    <form class="form" method="POST" action="#">
+      <div class="flex-column">
+        <label>Email </label>
+      </div>
+      <div class="inputForm">
+        <img src="images/email.png" alt="Email Icon" style="height: 20px; width: 20px; margin-left: 10px;">
+        <input type="email" id="email" class="input" placeholder="Enter your Email" required>
+      </div>
+
+      <div class="inputForm" style="position: relative;">
+        <img src="images/password.png" alt="Password Icon" style="height: 20px; width: 20px; margin-left: 10px;">
+        <input type="password" id="password" class="input" placeholder="Enter your Password" required style="padding-right: 40px;">
+        <img
+          id="togglePassword"
+          src="images/eye-close.png"
+          alt="Toggle Password"
+          style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; height: 20px; width: 20px;"
+        >
+      </div>
+
+      <button class="button-submit" type="submit">Login</button>
+      <p class="p">Don't have an account? <a class="span" href="#">Register here</a></p>
+
+      <div style="text-align: center;">
+        <a href="index.html" class="bubbles"><span class="text">Back To Demo List</span></a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function () {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.src = type === 'text' ? 'images/eye-open.png' : 'images/eye-close.png';
+    });
+  </script>
+</body>
+</html>
