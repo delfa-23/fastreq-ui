@@ -3,47 +3,967 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employee Requests</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>My Requests - FastReq</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --success: #4ade80;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --pending: #8b5cf6;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --gray: #64748b;
+      --gray-light: #e2e8f0;
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f0f4ff 0%, #f9f9ff 100%);
+      min-height: 100vh;
+      color: var(--dark);
+      padding: 20px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 24px;
+      text-decoration: none;
+    }
+
+    .logo i {
+      color: var(--primary);
+      font-size: 28px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+    }
+
+    .profile-name {
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    /* Info Box */
+    .info-box {
+      background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+      border-left: 5px solid var(--primary);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      color: var(--dark);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+      animation: slideIn 0.6s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .info-box h2 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      font-size: 22px;
+      color: var(--primary);
+    }
+
+    .info-box h2 i {
+      font-size: 24px;
+    }
+
+    .info-box p {
+      line-height: 1.7;
+      font-size: 16px;
+      color: #4a5568;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .page-title h2 {
+      font-size: 28px;
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .page-title i {
+      color: var(--primary);
+      font-size: 32px;
+    }
+
+    .page-stats {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: white;
+      border-radius: 50px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      font-weight: 500;
+    }
+
+    .stat-badge i {
+      font-size: 14px;
+    }
+
+    .stat-badge.total i { color: var(--primary); }
+    .stat-badge.pending i { color: var(--pending); }
+    .stat-badge.approved i { color: var(--success); }
+    .stat-badge.rejected i { color: var(--danger); }
+
+    /* Filter Section */
+    .filter-section {
+      background: white;
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 200px;
+    }
+
+    .filter-label {
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 14px;
+    }
+
+    .filter-select {
+      padding: 12px 16px;
+      border: 2px solid var(--gray-light);
+      border-radius: 8px;
+      font-size: 15px;
+      background: white;
+      color: var(--dark);
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 45px;
+      border: 2px solid var(--gray-light);
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border-color 0.3s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+    }
+
+    .filter-btn {
+      padding: 12px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    /* Table */
+    .table-container {
+      background: white;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 30px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+
+    thead {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    }
+
+    th {
+      padding: 20px;
+      text-align: left;
+      color: white;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--gray-light);
+      transition: background 0.2s;
+    }
+
+    tbody tr:hover {
+      background: var(--light);
+    }
+
+    td {
+      padding: 20px;
+      color: var(--dark);
+      font-size: 15px;
+    }
+
+    .item-cell {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .item-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 18px;
+    }
+
+    .item-details h4 {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .item-details p {
+      font-size: 13px;
+      color: var(--gray);
+    }
+
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 13px;
+      display: inline-block;
+    }
+
+    .status-pending {
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--pending);
+    }
+
+    .status-approved {
+      background: rgba(74, 222, 128, 0.1);
+      color: var(--success);
+    }
+
+    .status-rejected {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .status-processing {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    .action-cell {
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .view-btn {
+      background: rgba(67, 97, 238, 0.1);
+      color: var(--primary);
+    }
+
+    .view-btn:hover {
+      background: rgba(67, 97, 238, 0.2);
+    }
+
+    .edit-btn {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    .edit-btn:hover {
+      background: rgba(245, 158, 11, 0.2);
+    }
+
+    .delete-btn {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .delete-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    /* Action Buttons */
+    .action-section {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 16px 30px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--light);
+      transform: translateY(-3px);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+    }
+
+    .empty-icon {
+      font-size: 60px;
+      color: var(--gray-light);
+      margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+      font-size: 22px;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    .empty-state p {
+      color: var(--gray);
+      max-width: 500px;
+      margin: 0 auto 30px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 25px;
+      color: var(--gray);
+      font-size: 14px;
+      margin-top: 40px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .filter-group {
+        min-width: 100%;
+      }
+      
+      th, td {
+        padding: 15px 10px;
+      }
+      
+      .action-cell {
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .page-stats {
+        justify-content: flex-start;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .action-section {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
+  <!-- Header -->
+  <div class="header">
+    <a href="dashboard-karyawan.html" class="logo">
+      <i class="fas fa-bolt"></i>
+      <span>FastReq</span>
+    </a>
+    
+    <div class="user-profile">
+      <img src="dashboard-karyawan_files/alex.jpg" alt="Alexander" class="profile-img">
+      <span class="profile-name">Alexander Johnson</span>
+    </div>
+  </div>
+
+  <!-- Info Box -->
   <div class="info-box">
-  <h2>About This Page</h2>
-  <p>
-    This page represents the <strong>Employee Request List</strong> feature of the Procurement Application.  
-    It was built for <em>portfolio purposes</em> and only demonstrates the UI design.  
-    The requests, items, and statuses shown here are sample data and not connected to any backend system.
-  </p>
-</div>
+    <h2><i class="fas fa-info-circle"></i> About This Page</h2>
+    <p>
+      This page represents the <strong>Employee Request List</strong> feature of the FastReq Procurement Application.  
+      It was built for <em>portfolio purposes</em> and only demonstrates the UI design.  
+      The requests, items, and statuses shown here are sample data and not connected to any backend system.
+      You can filter, search, and interact with the table elements, but no actual data will be changed.
+    </p>
+  </div>
 
   <div class="container">
-    <h2>My Request List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Item Name</th>
-          <th>Quantity</th>
-          <th>Date</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>ASUS Laptop</td>
-          <td>1</td>
-          <td>2025-07-20</td>
-          <td>Pending</td>
-        </tr>
-        <tr>
-          <td>Wireless Mouse</td>
-          <td>2</td>
-          <td>2025-07-19</td>
-          <td>Approved</td>
-        </tr>
-      </tbody>
-    </table>
-    <a href="#" class="btn">Submit New Request</a>
-    <a href="index.html" class="btn">Back to Demo Page</a>
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-title">
+        <i class="fas fa-file-alt"></i>
+        <h2>My Request List</h2>
+      </div>
+      
+      <div class="page-stats">
+        <div class="stat-badge total">
+          <i class="fas fa-list"></i>
+          <span>Total: 8 requests</span>
+        </div>
+        <div class="stat-badge pending">
+          <i class="fas fa-clock"></i>
+          <span>Pending: 3</span>
+        </div>
+        <div class="stat-badge approved">
+          <i class="fas fa-check-circle"></i>
+          <span>Approved: 4</span>
+        </div>
+        <div class="stat-badge rejected">
+          <i class="fas fa-times-circle"></i>
+          <span>Rejected: 1</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <div class="filter-group">
+        <label class="filter-label">Status</label>
+        <select class="filter-select" id="statusFilter">
+          <option value="all">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+          <option value="processing">Processing</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label class="filter-label">Date Range</label>
+        <select class="filter-select" id="dateFilter">
+          <option value="all">All Time</option>
+          <option value="week">This Week</option>
+          <option value="month">This Month</option>
+          <option value="quarter">This Quarter</option>
+        </select>
+      </div>
+      
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search by item name or ID...">
+      </div>
+      
+      <button class="filter-btn" id="applyFilter">
+        <i class="fas fa-filter"></i>
+        <span>Apply Filters</span>
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Item Details</th>
+            <th>Quantity</th>
+            <th>Request Date</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="requestsTable">
+          <!-- Rows will be populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-section">
+      <a href="pengajuan-karyawan.html" class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+        <span>Submit New Request</span>
+      </a>
+      
+      <a href="dashboard-karyawan.html" class="btn btn-secondary">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Back to Dashboard</span>
+      </a>
+      
+      <a href="index.html" class="btn btn-secondary">
+        <i class="fas fa-list"></i>
+        <span>Back to Demo List</span>
+      </a>
+    </div>
   </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>FastReq Employee Requests • Demo Version 2.1.0 • All data shown is for demonstration purposes only</p>
+    <p style="margin-top: 5px; font-size: 13px;">© 2023 FastReq Application. This is a portfolio demonstration.</p>
+  </div>
+
+  <script>
+    // Sample request data
+    const requestsData = [
+      {
+        id: "REQ-001",
+        item: "ASUS Laptop",
+        description: "ASUS VivoBook 15, Intel Core i5, 8GB RAM, 512GB SSD",
+        quantity: 1,
+        date: "2025-07-20",
+        priority: "High",
+        status: "pending",
+        category: "Electronics"
+      },
+      {
+        id: "REQ-002",
+        item: "Wireless Mouse",
+        description: "Logitech MX Master 3S Wireless Mouse",
+        quantity: 2,
+        date: "2025-07-19",
+        priority: "Medium",
+        status: "approved",
+        category: "Peripherals"
+      },
+      {
+        id: "REQ-003",
+        item: "Office Desk",
+        description: "Ergonomic adjustable height desk",
+        quantity: 1,
+        date: "2025-07-15",
+        priority: "Medium",
+        status: "approved",
+        category: "Furniture"
+      },
+      {
+        id: "REQ-004",
+        item: "Software License",
+        description: "Adobe Creative Cloud Annual Subscription",
+        quantity: 1,
+        date: "2025-07-10",
+        priority: "High",
+        status: "processing",
+        category: "Software"
+      },
+      {
+        id: "REQ-005",
+        item: "Monitor",
+        description: "Dell 27-inch 4K UHD Monitor",
+        quantity: 1,
+        date: "2025-07-05",
+        priority: "Medium",
+        status: "approved",
+        category: "Electronics"
+      },
+      {
+        id: "REQ-006",
+        item: "Conference Budget",
+        description: "Travel and accommodation for Tech Conference 2025",
+        quantity: 1,
+        date: "2025-06-28",
+        priority: "High",
+        status: "rejected",
+        category: "Travel"
+      },
+      {
+        id: "REQ-007",
+        item: "Office Chair",
+        description: "Ergonomic office chair with lumbar support",
+        quantity: 1,
+        date: "2025-06-20",
+        priority: "Low",
+        status: "approved",
+        category: "Furniture"
+      },
+      {
+        id: "REQ-008",
+        item: "External Hard Drive",
+        description: "Seagate 2TB Portable External Hard Drive",
+        quantity: 3,
+        date: "2025-06-15",
+        priority: "Medium",
+        status: "pending",
+        category: "Storage"
+      }
+    ];
+
+    // Get category icon
+    function getCategoryIcon(category) {
+      const icons = {
+        "Electronics": "fas fa-laptop",
+        "Peripherals": "fas fa-mouse",
+        "Furniture": "fas fa-chair",
+        "Software": "fas fa-code",
+        "Travel": "fas fa-plane",
+        "Storage": "fas fa-hdd",
+        "Other": "fas fa-box"
+      };
+      return icons[category] || "fas fa-box";
+    }
+
+    // Get status badge class
+    function getStatusClass(status) {
+      const classes = {
+        "pending": "status-pending",
+        "approved": "status-approved",
+        "rejected": "status-rejected",
+        "processing": "status-processing"
+      };
+      return classes[status] || "status-pending";
+    }
+
+    // Get status text
+    function getStatusText(status) {
+      const texts = {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "processing": "Processing"
+      };
+      return texts[status] || "Pending";
+    }
+
+    // Render table rows
+    function renderTable(data) {
+      const tableBody = document.getElementById('requestsTable');
+      tableBody.innerHTML = '';
+      
+      if (data.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="fas fa-inbox"></i>
+                </div>
+                <h3>No requests found</h3>
+                <p>Try adjusting your filters or submit a new request</p>
+                <a href="pengajuan-karyawan.html" class="btn btn-primary">
+                  <i class="fas fa-plus"></i>
+                  <span>Submit New Request</span>
+                </a>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+      
+      data.forEach(request => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>
+            <div class="item-cell">
+              <div class="item-icon">
+                <i class="${getCategoryIcon(request.category)}"></i>
+              </div>
+              <div class="item-details">
+                <h4>${request.item}</h4>
+                <p>${request.description}</p>
+                <p style="font-size: 12px; color: var(--primary); font-weight: 500;">ID: ${request.id}</p>
+              </div>
+            </div>
+          </td>
+          <td>${request.quantity}</td>
+          <td>${request.date}</td>
+          <td>
+            <span class="status-badge ${request.priority === 'High' ? 'status-pending' : request.priority === 'Medium' ? 'status-processing' : 'status-approved'}">
+              ${request.priority}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge ${getStatusClass(request.status)}">
+              ${getStatusText(request.status)}
+            </span>
+          </td>
+          <td>
+            <div class="action-cell">
+              <button class="action-btn view-btn" onclick="viewRequest('${request.id}')">
+                <i class="fas fa-eye"></i>
+                <span>View</span>
+              </button>
+              ${request.status === 'pending' ? `
+                <button class="action-btn edit-btn" onclick="editRequest('${request.id}')">
+                  <i class="fas fa-edit"></i>
+                  <span>Edit</span>
+                </button>
+                <button class="action-btn delete-btn" onclick="deleteRequest('${request.id}')">
+                  <i class="fas fa-trash"></i>
+                  <span>Delete</span>
+                </button>
+              ` : ''}
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Filter functionality
+    function filterRequests() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const dateFilter = document.getElementById('dateFilter').value;
+      const searchInput = document.getElementById('searchInput').value.toLowerCase();
+      
+      let filteredData = [...requestsData];
+      
+      // Status filter
+      if (statusFilter !== 'all') {
+        filteredData = filteredData.filter(request => request.status === statusFilter);
+      }
+      
+      // Search filter
+      if (searchInput) {
+        filteredData = filteredData.filter(request => 
+          request.item.toLowerCase().includes(searchInput) || 
+          request.id.toLowerCase().includes(searchInput) ||
+          request.description.toLowerCase().includes(searchInput)
+        );
+      }
+      
+      // Date filter (simplified for demo)
+      if (dateFilter !== 'all') {
+        const now = new Date();
+        filteredData = filteredData.filter(request => {
+          const requestDate = new Date(request.date);
+          if (dateFilter === 'week') {
+            const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            return requestDate >= oneWeekAgo;
+          } else if (dateFilter === 'month') {
+            const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+            return requestDate >= oneMonthAgo;
+          } else if (dateFilter === 'quarter') {
+            const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+            return requestDate >= threeMonthsAgo;
+          }
+          return true;
+        });
+      }
+      
+      renderTable(filteredData);
+      
+      // Update stats
+      updateStats(filteredData);
+    }
+
+    // Update stats
+    function updateStats(data) {
+      const total = data.length;
+      const pending = data.filter(r => r.status === 'pending').length;
+      const approved = data.filter(r => r.status === 'approved').length;
+      const rejected = data.filter(r => r.status === 'rejected').length;
+      
+      document.querySelector('.stat-badge.total span').textContent = `Total: ${total} requests`;
+      document.querySelector('.stat-badge.pending span').textContent = `Pending: ${pending}`;
+      document.querySelector('.stat-badge.approved span').textContent = `Approved: ${approved}`;
+      document.querySelector('.stat-badge.rejected span').textContent = `Rejected: ${rejected}`;
+    }
+
+    // Action functions
+    function viewRequest(id) {
+      const request = requestsData.find(r => r.id === id);
+      alert(`Viewing request: ${id}\n\nItem: ${request.item}\nStatus: ${getStatusText(request.status)}\nDate: ${request.date}\n\nThis is a demo - in a real application, this would open a detailed view.`);
+    }
+
+    function editRequest(id) {
+      alert(`Editing request: ${id}\n\nThis is a demo - in a real application, this would open an edit form.`);
+    }
+
+    function deleteRequest(id) {
+      if (confirm(`Are you sure you want to delete request ${id}?\n\nThis is a demo - no actual data will be deleted.`)) {
+        alert(`Request ${id} would be deleted in a real application.`);
+      }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Render initial table
+      renderTable(requestsData);
+      
+      // Set up event listeners
+      document.getElementById('applyFilter').addEventListener('click', filterRequests);
+      document.getElementById('searchInput').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') filterRequests();
+      });
+      
+      // Animate table rows
+      setTimeout(() => {
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach((row, index) => {
+          row.style.animation = `slideIn 0.5s ease-out ${index * 0.05}s forwards`;
+          row.style.opacity = '0';
+        });
+      }, 300);
+    });
+  </script>
 </body>
 </html>
